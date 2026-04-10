@@ -249,7 +249,7 @@ MainSection:Divider()
 -- Chạy mặc định
 LoadAim()
 
-local HomeTab = Tab:Button({
+local MainSection = HomeTab:Button({
     Title = "无头断腿『支持r6』",
     Locked = false,
     Callback = function()
@@ -257,7 +257,7 @@ local HomeTab = Tab:Button({
     end
 })
 
-local HomeTab = Tab:Button({
+local MainSection = HomeTab:Button({
     Title = "改索尼克角色脚本",
     Locked = false,
     Callback = function()
@@ -265,7 +265,7 @@ local HomeTab = Tab:Button({
     end
 })
 
-local HomeTab = Tab:Button({
+local MainSection = HomeTab:Button({
     Title = "改帧率",
     Locked = false,
     Callback = function()
