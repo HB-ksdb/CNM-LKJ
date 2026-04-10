@@ -1,3 +1,28 @@
+local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
+
+-- ================ 黑名单检查 ================
+local blacklist = {
+    "BadPlayer1",
+    "Hacker123",
+    "CheaterABC",
+}
+
+local function checkBlacklist()
+    local username = game.Players.LocalPlayer.Name
+    for _, blacklistedName in ipairs(blacklist) do
+        if username == blacklistedName then
+            game.Players.LocalPlayer:Kick("你已被加入黑名单！")
+            return true
+        end
+    end
+    return false
+end
+
+if checkBlacklist() then
+    return
+end
+
+
 -- 高级加载器弹窗（5秒流畅动画进度条）
 local player = game.Players.LocalPlayer
 local gui = Instance.new("ScreenGui")
@@ -196,14 +221,6 @@ local function closePopup()
     task.wait(0.4)
     gui:Destroy()
     
--- 执行你的脚本
-local function executeYourScript()
-    -- ========== 在这里放你的 loadstring ==========
-    -- 取消下面代码的注释即可使用
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/HB-ksdb/CNM-LKJ/main/CNM%E9%80%9A%E7%94%A8%E8%84%9A%E6%9C%AC.lua"))()
-    -- ============================================
-    print("脚本已执行")
-end
 
 -- 进度条动画（5秒填满）
 local function startProgressAnimation()
@@ -267,3 +284,84 @@ slideDown:Play()
 -- 等待弹窗动画完成后开始进度条
 task.wait(0.6)
 startProgressAnimation()
+
+            -- ================ 加载 WindUI 主功能窗口 ================
+            local MainWindow = WindUI:CreateWindow({
+                Title = "<font color='#00AAFF'>HB 高级面板</font>",
+                Icon = "rbxassetid://4483362748",
+                Author = "HB Script",
+                Size = UDim2.fromOffset(400, 400),
+                Transparent = true,        -- 开启透明模式
+                Acrylic = true,
+            })
+
+            MainWindow:EditOpenButton({
+                Title = "HB 脚本",
+                Icon = "crown",
+                CornerRadius = UDim.new(0, 16),
+                StrokeThickness = 2,
+                Draggable = true
+            })
+
+            -- 添加标签
+            MainWindow:Tag({ Title = "已解锁", Color = Color3.fromHex("#00FF66") })
+            MainWindow:Tag({ Title = "VIP", Color = Color3.fromHex("#FFAA00") })
+
+            -- 主功能标签页
+            local MainSection = MainWindow:Section({ Title = "功能列表", Opened = true })
+            local FuncTab = MainSection:Tab({ Title = "功能", Icon = "bolt" })
+
+            -- 功能按钮
+            FuncTab:Button({
+                Title = "示例功能1",
+                Desc = "点击执行示例功能",
+                Callback = function()
+                    print("功能1执行了")
+                    WindUI:Notify({
+                        Title = "提示",
+                        Content = "示例功能1已执行",
+                        Duration = 2,
+                        Icon = "check"
+                    })
+                end
+            })
+
+            FuncTab:Button({
+                Title = "示例功能2",
+                Desc = "点击执行示例功能",
+                Callback = function()
+                    print("功能2执行了")
+                    WindUI:Notify({
+                        Title = "提示",
+                        Content = "示例功能2已执行",
+                        Duration = 2,
+                        Icon = "check"
+                    })
+                end
+            })
+
+            FuncTab:Divider()
+
+            FuncTab:Button({
+                Title = "示例功能3",
+                Desc = "点击执行示例功能",
+                Callback = function()
+                    print("功能3执行了")
+                    WindUI:Notify({
+                        Title = "提示",
+                        Content = "示例功能3已执行",
+                        Duration = 2,
+                        Icon = "check"
+                    })
+                end
+            })
+            
+            -- 显示启动通知
+            WindUI:Notify({
+                Title = "HB 高级脚本",
+                Content = "验证成功！欢迎使用",
+                Duration = 3,
+                Icon = "crown"
+            })
+        end
+    else
