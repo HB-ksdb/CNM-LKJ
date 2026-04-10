@@ -1,330 +1,117 @@
-local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
 
--- ================ 黑名单检查 ================
+-- ================ 黑名单 ================
+-- 名字用户（别人用不了脚本）
 local blacklist = {
     "BadPlayer1",
     "Hacker123",
     "CheaterABC",
+    "",
+    "要拉黑的用户名2"
+-- ================ 添加要拉黑的用户名 ================
 }
 
+-- ================ 检查当前玩家是否在黑名单中 ================
 local function checkBlacklist()
-    local username = game.Players.LocalPlayer.Name
+    local localPlayer = game.Players.LocalPlayer
+    local username = localPlayer.Name
+    
+-- ================ 遍历黑名单检查 ================
     for _, blacklistedName in ipairs(blacklist) do
         if username == blacklistedName then
-            game.Players.LocalPlayer:Kick("你已被加入黑名单！")
+-- ================ 如果在黑名单中，执行踢出代码 ================
+            game.Players.LocalPlayer:Kick("你已被HB FXM脚本加入至黑名单，我让你惹HB FXM现在好了吧？你活该！")
             return true
         end
     end
     return false
 end
 
+-- ================ 立即执行检查 ================
 if checkBlacklist() then
-    return
+    return  -- = 如果在黑名单中，停止执行后续代码 =
+end
+-- ================ 彩虹字符 ================
+-- ================ 支持服务器 ================
+-- ================ 1.执行UI加载器…… ================
+-- ================  ================
+function Antihook()
+    return "Hook"
 end
 
--- ================ 创建高级密码验证窗口 ================
+hookfunction(Antihook, function()
+    return "No Hook"
+end)
+
+hookfunction(game.HttpGet, print)
+
+if not isfunctionhooked(Antihook) or not isfunctionhooked(game.HttpGet) then
+    game:shutdown("别搞我")
+    while true do end
+end
+
+restorefunction(game.HttpGet)
+
+if isfunctionhooked(game.HttpGet) or isfunctionhooked(request) or isfunctionhooked(tostring) then
+    game:shutdown("666")
+    while true do end
+end
+
+-- ================  ================
+local LBLG = Instance.new("ScreenGui", getParent)
+local LBL = Instance.new("TextLabel", getParent)
 local player = game.Players.LocalPlayer
-local gui = Instance.new("ScreenGui")
-gui.Name = "AdvancedPasswordGUI"
-gui.Parent = player:WaitForChild("PlayerGui")
-gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
--- 背景遮罩（带模糊效果）
-local overlay = Instance.new("Frame")
-overlay.Size = UDim2.new(1, 0, 1, 0)
-overlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-overlay.BackgroundTransparency = 0.7
-overlay.Parent = gui
+LBLG.Name = "LBLG"
+LBLG.Parent = game.CoreGui
+LBLG.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+LBLG.Enabled = true
+LBL.Name = "LBL"
+LBL.Parent = LBLG
+LBL.BackgroundColor3 = Color3.new(1, 1, 1)
+LBL.BackgroundTransparency = 1
+LBL.BorderColor3 = Color3.new(0, 0, 0)
+LBL.Position = UDim2.new(0.75,0,0.010,0)
+LBL.Size = UDim2.new(0, 133, 0, 30)
+LBL.Font = Enum.Font.GothamSemibold
+LBL.Text = "鹤pro"
+LBL.TextColor3 = Color3.new(1, 1, 1)
+LBL.TextScaled = true
+LBL.TextSize = 14
+LBL.TextWrapped = true
+LBL.Visible = true
 
--- 主窗口
-local passwordFrame = Instance.new("Frame")
-passwordFrame.Size = UDim2.new(0, 420, 0, 320)
-passwordFrame.Position = UDim2.new(0.5, -210, 0.5, -160)
-passwordFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-passwordFrame.BackgroundTransparency = 0.1
-passwordFrame.BorderSizePixel = 0
-passwordFrame.ClipsDescendants = true
-passwordFrame.Parent = gui
+local FpsLabel = LBL
+local Heartbeat = game:GetService("RunService").Heartbeat
+local LastIteration, Start
+local FrameUpdateTable = { }
 
--- 圆角
-local frameCorner = Instance.new("UICorner")
-frameCorner.CornerRadius = UDim.new(0, 20)
-frameCorner.Parent = passwordFrame
-
--- 边框光效
-local uiStroke = Instance.new("UIStroke")
-uiStroke.Thickness = 1
-uiStroke.Color = Color3.fromRGB(100, 100, 150)
-uiStroke.Transparency = 0.5
-uiStroke.Parent = passwordFrame
-
--- 顶部渐变条
-local gradientBar = Instance.new("Frame")
-gradientBar.Size = UDim2.new(1, 0, 0, 5)
-gradientBar.Position = UDim2.new(0, 0, 0, 0)
-gradientBar.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
-gradientBar.BorderSizePixel = 0
-gradientBar.Parent = passwordFrame
-
-local topCorner = Instance.new("UICorner")
-topCorner.CornerRadius = UDim.new(0, 20)
-topCorner.Parent = gradientBar
-
--- 渐变效果（只切顶部两个角）
-local gradientCorner = Instance.new("UICorner")
-gradientCorner.CornerRadius = UDim.new(0, 20)
-gradientCorner.Parent = gradientBar
-
--- 标题区域
-local titleFrame = Instance.new("Frame")
-titleFrame.Size = UDim2.new(1, 0, 0, 60)
-titleFrame.Position = UDim2.new(0, 0, 0, 5)
-titleFrame.BackgroundTransparency = 1
-titleFrame.Parent = passwordFrame
-
-
--- 图标
-local iconLabel = Instance.new("TextLabel")
-iconLabel.Size = UDim2.new(0, 40, 0, 40)
-iconLabel.Position = UDim2.new(0, 20, 0, 10)
-iconLabel.BackgroundTransparency = 1
-iconLabel.Text = "🔐"
-iconLabel.TextColor3 = Color3.fromRGB(0, 150, 255)
-iconLabel.TextSize = 32
-iconLabel.Font = Enum.Font.GothamBold
-iconLabel.Parent = titleFrame
-
--- 标题文字
-local titleLabel = Instance.new("TextLabel")
-titleLabel.Size = UDim2.new(1, -80, 0, 30)
-titleLabel.Position = UDim2.new(0, 70, 0, 10)
-titleLabel.BackgroundTransparency = 1
-titleLabel.Text = "身份验证"
-titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-titleLabel.TextSize = 24
-titleLabel.Font = Enum.Font.GothamBold
-titleLabel.TextXAlignment = Enum.TextXAlignment.Left
-titleLabel.Parent = titleFrame
-
-local subtitleLabel = Instance.new("TextLabel")
-subtitleLabel.Size = UDim2.new(1, -80, 0, 20)
-subtitleLabel.Position = UDim2.new(0, 70, 0, 38)
-subtitleLabel.BackgroundTransparency = 1
-subtitleLabel.Text = "请输入密码以继续"
-subtitleLabel.TextColor3 = Color3.fromRGB(150, 150, 170)
-subtitleLabel.TextSize = 14
-subtitleLabel.Font = Enum.Font.Gotham
-subtitleLabel.TextXAlignment = Enum.TextXAlignment.Left
-subtitleLabel.Parent = titleFrame
-
--- 分割线
-local divider = Instance.new("Frame")
-divider.Size = UDim2.new(0.9, 0, 0, 1)
-divider.Position = UDim2.new(0.05, 0, 0, 75)
-divider.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
-divider.BorderSizePixel = 0
-divider.Parent = passwordFrame
-
--- 密码输入框容器
-local inputContainer = Instance.new("Frame")
-inputContainer.Size = UDim2.new(0.8, 0, 0, 50)
-inputContainer.Position = UDim2.new(0.1, 0, 0, 100)
-inputContainer.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
-inputContainer.BackgroundTransparency = 0.5
-inputContainer.BorderSizePixel = 0
-inputContainer.Parent = passwordFrame
-
-local inputCorner = Instance.new("UICorner")
-inputCorner.CornerRadius = UDim.new(0, 12)
-inputCorner.Parent = inputContainer
-
-local inputStroke = Instance.new("UIStroke")
-inputStroke.Thickness = 1
-inputStroke.Color = Color3.fromRGB(80, 80, 100)
-inputStroke.Transparency = 0.5
-inputStroke.Parent = inputContainer
-
--- 输入框图标
-local inputIcon = Instance.new("TextLabel")
-inputIcon.Size = UDim2.new(0, 40, 1, 0)
-inputIcon.Position = UDim2.new(0, 5, 0, 0)
-inputIcon.BackgroundTransparency = 1
-inputIcon.Text = "🔑"
-inputIcon.TextColor3 = Color3.fromRGB(150, 150, 170)
-inputIcon.TextSize = 20
-inputIcon.Font = Enum.Font.Gotham
-inputIcon.Parent = inputContainer
-
--- 密码输入框
-local passwordBox = Instance.new("TextBox")
-passwordBox.Size = UDim2.new(1, -50, 1, 0)
-passwordBox.Position = UDim2.new(0, 45, 0, 0)
-passwordBox.BackgroundTransparency = 1
-passwordBox.PlaceholderText = "输入密码"
-passwordBox.Text = ""
-passwordBox.Font = Enum.Font.Gotham
-passwordBox.TextSize = 16
-passwordBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-passwordBox.PlaceholderColor3 = Color3.fromRGB(120, 120, 140)
-passwordBox.ClearTextOnFocus = false
-passwordBox.Parent = inputContainer
-
--- 状态标签（带图标）
-local statusFrame = Instance.new("Frame")
-statusFrame.Size = UDim2.new(0.8, 0, 0, 30)
-statusFrame.Position = UDim2.new(0.1, 0, 0, 165)
-statusFrame.BackgroundTransparency = 1
-statusFrame.Parent = passwordFrame
-
-local statusIcon = Instance.new("TextLabel")
-statusIcon.Size = UDim2.new(0, 25, 1, 0)
-statusIcon.Position = UDim2.new(0, 0, 0, 0)
-statusIcon.BackgroundTransparency = 1
-statusIcon.Text = "⏳"
-statusIcon.TextColor3 = Color3.fromRGB(200, 200, 200)
-statusIcon.TextSize = 16
-statusIcon.Font = Enum.Font.Gotham
-statusIcon.TextXAlignment = Enum.TextXAlignment.Center
-statusIcon.Parent = statusFrame
-
-local statusLabel = Instance.new("TextLabel")
-statusLabel.Size = UDim2.new(1, -30, 1, 0)
-statusLabel.Position = UDim2.new(0, 30, 0, 0)
-statusLabel.BackgroundTransparency = 1
-statusLabel.Text = "等待输入密码"
-statusLabel.TextColor3 = Color3.fromRGB(180, 180, 200)
-statusLabel.TextSize = 14
-statusLabel.Font = Enum.Font.Gotham
-statusLabel.TextXAlignment = Enum.TextXAlignment.Left
-statusLabel.Parent = statusFrame
-
--- 按钮容器
-local buttonFrame = Instance.new("Frame")
-buttonFrame.Size = UDim2.new(0.8, 0, 0, 45)
-buttonFrame.Position = UDim2.new(0.1, 0, 0, 215)
-buttonFrame.BackgroundTransparency = 1
-buttonFrame.Parent = passwordFrame
-
--- 确认按钮（渐变）
-local confirmBtn = Instance.new("TextButton")
-confirmBtn.Size = UDim2.new(0.6, 0, 1, 0)
-confirmBtn.Position = UDim2.new(0.2, 0, 0, 0)
-confirmBtn.Text = "验证并解锁"
-confirmBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-confirmBtn.TextSize = 16
-confirmBtn.Font = Enum.Font.GothamBold
-confirmBtn.BorderSizePixel = 0
-confirmBtn.BackgroundColor3 = Color3.fromRGB(0, 100, 255)
-confirmBtn.Parent = buttonFrame
-
-local btnCorner = Instance.new("UICorner")
-btnCorner.CornerRadius = UDim.new(0, 25)
-btnCorner.Parent = confirmBtn
-
--- 按钮光晕效果
-local btnGlow = Instance.new("Frame")
-btnGlow.Size = UDim2.new(1, 0, 1, 0)
-btnGlow.Position = UDim2.new(0, 0, 0, 0)
-btnGlow.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-btnGlow.BackgroundTransparency = 0.9
-btnGlow.BorderSizePixel = 0
-btnGlow.Parent = confirmBtn
-
-local glowCorner = Instance.new("UICorner")
-glowCorner.CornerRadius = UDim.new(0, 25)
-glowCorner.Parent = btnGlow
-
--- 底部提示
-local footerLabel = Instance.new("TextLabel")
-footerLabel.Size = UDim2.new(1, 0, 0, 20)
-footerLabel.Position = UDim2.new(0, 0, 0, 285)
-footerLabel.BackgroundTransparency = 1
-footerLabel.Text = "© HB Script | 仅供授权用户使用"
-footerLabel.TextColor3 = Color3.fromRGB(100, 100, 120)
-footerLabel.TextSize = 11
-footerLabel.Font = Enum.Font.Gotham
-footerLabel.Parent = passwordFrame
-
--- 动画：窗口淡入
-passwordFrame.BackgroundTransparency = 0.15
-passwordFrame:TweenSize(UDim2.new(0, 420, 0, 320), "Out", "Back", 0.3, true)
-
--- 按钮悬停效果
-confirmBtn.MouseEnter:Connect(function()
-    confirmBtn:TweenSize(UDim2.new(0.64, 0, 1, 0), "Out", "Quad", 0.1, true)
-    confirmBtn.Position = UDim2.new(0.18, 0, 0, 0)
-    confirmBtn.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
-    btnGlow.BackgroundTransparency = 0.85
-end)
-
-confirmBtn.MouseLeave:Connect(function()
-    confirmBtn:TweenSize(UDim2.new(0.6, 0, 1, 0), "Out", "Quad", 0.1, true)
-    confirmBtn.Position = UDim2.new(0.2, 0, 0, 0)
-    confirmBtn.BackgroundColor3 = Color3.fromRGB(0, 100, 255)
-    btnGlow.BackgroundTransparency = 0.9
-end)
-
--- 输入框获得焦点效果
-passwordBox.Focused:Connect(function()
-    inputContainer.BackgroundColor3 = Color3.fromRGB(45, 45, 60)
-    inputStroke.Color = Color3.fromRGB(0, 120, 255)
-    inputStroke.Transparency = 0.3
-    inputIcon.TextColor3 = Color3.fromRGB(0, 150, 255)
-end)
-
-passwordBox.FocusLost:Connect(function()
-    inputContainer.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
-    inputStroke.Color = Color3.fromRGB(80, 80, 100)
-    inputStroke.Transparency = 0.5
-    inputIcon.TextColor3 = Color3.fromRGB(150, 150, 170)
-end)
-
--- 正确密码
-local CORRECT_PASSWORD = "123456"
-local unlocked = false
-
--- 更新状态函数
-local function updateStatus(text, icon, color)
-    statusLabel.Text = text
-    statusIcon.Text = icon
-    statusLabel.TextColor3 = color
-    statusIcon.TextColor3 = color
+local function HeartbeatUpdate()
+	LastIteration = tick()
+	for Index = #FrameUpdateTable, 1, -1 do
+		FrameUpdateTable[Index + 1] = (FrameUpdateTable[Index] >= LastIteration - 1) and FrameUpdateTable[Index] or nil
+	end
+	FrameUpdateTable[1] = LastIteration
+	local CurrentFPS = (tick() - Start >= 1 and #FrameUpdateTable) or (#FrameUpdateTable / (tick() - Start))
+	CurrentFPS = CurrentFPS - CurrentFPS % 1
+	FpsLabel.Text = ("HB FXM:"..os.date("%H").."时"..os.date("%M").."分"..os.date("%S")).."秒"
 end
+Start = tick()
+Heartbeat:Connect(HeartbeatUpdate)
 
--- 确认按钮点击事件
-confirmBtn.MouseButton1Click:Connect(function()
-    local inputPassword = passwordBox.Text
-    
-    if inputPassword == CORRECT_PASSWORD then
-        updateStatus("验证成功！正在加载功能...", "✅", Color3.fromRGB(0, 255, 100))
-        
-        -- 按钮成功动画
-        confirmBtn.BackgroundColor3 = Color3.fromRGB(0, 200, 100)
-        confirmBtn.Text = "✓ 验证成功"
-        
-        if not unlocked then
-            unlocked = true
-            
-            -- 延迟加载主界面
-            task.wait(0.8)
-            
-            -- 销毁密码窗口（带动画）
-            passwordFrame:TweenSize(UDim2.new(0, 400, 0, 300), "In", "Quad", 0.2, true)
-            task.wait(0.2)
-            gui:Destroy()
-            
+local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
+
             -- ================ 加载 WindUI 主功能窗口 ================
             local MainWindow = WindUI:CreateWindow({
-                Title = "<font color='#00AAFF'>HB 高级面板</font>",
+                Title = "<font color='#00AAFF'>CNM脚本通用</font>",
                 Icon = "rbxassetid://4483362748",
-                Author = "HB Script",
-                Size = UDim2.fromOffset(500, 400),
-                SideBarWidth = 160,
+                Author = "CNM Script",
+                Size = UDim2.fromOffset(400, 400),
+                Transparent = true,        -- 开启透明模式
                 Acrylic = true,
             })
 
             MainWindow:EditOpenButton({
-                Title = "HB 脚本",
+                Title = "CNM 脚本",
                 Icon = "crown",
                 CornerRadius = UDim.new(0, 16),
                 StrokeThickness = 2,
@@ -333,95 +120,156 @@ confirmBtn.MouseButton1Click:Connect(function()
 
             -- 添加标签
             MainWindow:Tag({ Title = "已解锁", Color = Color3.fromHex("#00FF66") })
-            MainWindow:Tag({ Title = "VIP", Color = Color3.fromHex("#FFAA00") })
+            MainWindow:Tag({ Title = "CNM", Color = Color3.fromHex("#FFAA00") })
+            MainWindow:Tag({ Title = "1.0", Color = Color3.fromHex("#FFAA00") })
 
-            -- 主功能标签页
-            local MainSection = MainWindow:Section({ Title = "功能列表", Opened = true })
-            local FuncTab = MainSection:Tab({ Title = "功能", Icon = "bolt" })
+            local MainSection = Window:Section({
+             Title = "信息",
+                })
 
-            -- 功能按钮
-            FuncTab:Button({
-                Title = "示例功能1",
-                Desc = "点击执行示例功能",
-                Callback = function()
-                    print("功能1执行了")
-                    WindUI:Notify({
-                        Title = "提示",
-                        Content = "示例功能1已执行",
-                        Duration = 2,
-                        Icon = "check"
-                    })
-                end
-            })
+                -- About Tab
+                local AboutTab = MainSection:Tab({
+                    Title = "更新说明",
+                    Desc = "Information & Details",
+                    Icon = "solar:info-square-bold",
+                    IconColor = Color3.fromHex("#83889E"),
+                    IconShape = "Square",
+                    Border = true,
+                })
 
-            FuncTab:Button({
-                Title = "示例功能2",
-                Desc = "点击执行示例功能",
-                Callback = function()
-                    print("功能2执行了")
-                    WindUI:Notify({
-                        Title = "提示",
-                        Content = "示例功能2已执行",
-                        Duration = 2,
-                        Icon = "check"
-                    })
-                end
-            })
+                -- Moved this block UP / BEFORE the long description section
+                local AboutSection = AboutTab:Section({
+                    Title = "1.0版本更新",
+                })
 
-            FuncTab:Divider()
+                AboutSection:Section({
+                    Title = "HB脚本改成CNM脚本",
+                    TextSize = 24,
+                    FontWeight = Enum.FontWeight.SemiBold,
+                })
 
-            FuncTab:Button({
-                Title = "示例功能3",
-                Desc = "点击执行示例功能",
-                Callback = function()
-                    print("功能3执行了")
-                    WindUI:Notify({
-                        Title = "提示",
-                        Content = "示例功能3已执行",
-                        Duration = 2,
-                        Icon = "check"
-                    })
-                end
-            })
-            
-            -- 显示启动通知
-            WindUI:Notify({
-                Title = "HB 高级脚本",
-                Content = "验证成功！欢迎使用",
-                Duration = 3,
-                Icon = "crown"
-            })
-        end
-    else
-        -- 错误动画效果
-        updateStatus("密码错误，请重试", "❌", Color3.fromRGB(255, 80, 80))
-        confirmBtn.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
-        confirmBtn.Text = "✗ 验证失败"
-        
-        -- 抖动效果
-        local originalPos = passwordFrame.Position
-        for i = 1, 3 do
-            passwordFrame.Position = UDim2.new(0.5, -210 + (i % 2 == 0 and -5 or 5), 0.5, -160)
-            task.wait(0.03)
-        end
-        passwordFrame.Position = originalPos
-        
-        -- 清空输入框
-        passwordBox.Text = ""
-        
-        -- 恢复按钮
-        task.wait(1)
-        if not unlocked then
-            updateStatus("等待输入密码", "⏳", Color3.fromRGB(180, 180, 200))
-            confirmBtn.BackgroundColor3 = Color3.fromRGB(0, 100, 255)
-            confirmBtn.Text = "验证并解锁"
-        end
+                -- Long description comes AFTER the headers
+                AboutSection:Section({
+                    Title = 
+                        "由于HB停更后就再也没有更新了之后今天2026年4月10号正是回归.\n\n" ..
+                        "本次脚本是缝合不会自制.\n\n" ..
+                        "具体脚本更新了什么:\n\n" ..
+                        "• 1.除了更新了UI优化功能\n" ..
+                        "• \n" ..
+                        "• \n" ..
+                        "• \n" ..
+                        ".\n\n" ..
+                        ".\n\n" ..
+                        ".",
+
+                    TextSize = 18,
+                    TextTransparency = 0.35,
+                    FontWeight = Enum.FontWeight.Medium,
+
+                    TextXAlignment = "Left",
+                    Box = false,
+                    BoxBorder = true,
+                    Opened = true,
+                })
+
+                AboutTab:Divider()
+
+                AboutTab:Space({ Columns = 4 })
+
+
+                local MainSection = Window:Section({
+    Title = "Main",
+})
+
+local HomeTab = MainSection:Tab({
+    Title = "最坚强战场",
+    Icon = "home",
+})
+
+-- Tạo một Section duy nhất có Khung và Viền
+local MainSection = HomeTab:Section({
+    Title = "最坚强战场",
+    Desc = "大战场",
+    Box = true, -- Bật khung
+    BoxBorder = true, -- Bật viền (Cực đẹp)
+    Opened = true
+})
+
+-- Tạo một Group nằm NGAY TRONG Section để chứa các nút chọn
+local SelectionGroup = MainSection:Group({})
+
+-- Biến để chứa các thành phần chức năng (để Destroy khi chuyển tab)
+local FunctionElements = {}
+
+-- Hàm dọn dẹp các chức năng cũ
+local function ClearFunctions()
+    for _, element in pairs(FunctionElements) do
+        if element then element:Destroy() end
     end
-end)
+    FunctionElements = {}
+end
 
--- 回车键验证
-passwordBox.FocusLost:Connect(function(enterPressed)
-    if enterPressed then
-        confirmBtn.MouseButton1Click:Fire()
+-- --- CHỨC NĂNG 1: AIM ---
+local function LoadAim()
+    ClearFunctions()
+    
+    local s1 = MainSection:Button({ Title = "自动侧闪『推荐』", Callback = function() loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/54d6b993fe3a4c1f5c3e375eba35e5ec.lua"))() end })
+    local t1 = MainSection:Button({ Title = "自动侧闪", Callback = function() loadstring(game:HttpGet("https://api.getpolsec.com/scripts/hosted/23bcf4264b586dc93b16a9b054eddae259938b7421ac5096353079b2e9d74e24.lua"))() end })
+        
+    -- Lưu lại để xóa sau này
+    table.insert(FunctionElements, s1)
+    table.insert(FunctionElements, t1)
+end
+
+-- --- CHỨC NĂNG 2: TEAM ---
+local function LoadTeam()
+    ClearFunctions()
+    
+    local b1 = MainSection:Button({ Title = "自动上钩.1", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/dinhthanhtuankiet1762009-sudo/Js/refs/heads/main/aca40cf1f24c92f1.lua.txt"))() end })
+    local b2 = MainSection:Button({ Title = "自动上钩.2", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/letuankiet09812345-cmyk/Testkiba/refs/heads/main/4cbcd9b905ee3e41.lua.txt"))() end })
+    
+    table.insert(FunctionElements, b1)
+    table.insert(FunctionElements, b2)
+end
+
+-- --- BỎ NÚT CHỌN VÀO GROUP (Nằm trong Section) ---
+SelectionGroup:Button({ 
+    Title = "最坚强战场侧闪", 
+    Icon = "settings",
+    Callback = function() LoadAim() end 
+})
+
+SelectionGroup:Button({ 
+    Title = "最坚强战场自动上钩", 
+    Icon = "users",
+    Callback = function() LoadTeam() end 
+})
+
+MainSection:Divider()
+-- Chạy mặc định
+LoadAim()
+
+local HomeTab = Tab:Button({
+    Title = "无头断腿『支持r6』",
+    Locked = false,
+    Callback = function()
+        loadstring(game:HttpGet("https://rawscripts.net/raw/The-Strongest-Battlegrounds-tsb-client-sided-headless-and-korblox-74593"))()
     end
-end)            
+})
+
+local HomeTab = Tab:Button({
+    Title = "改索尼克角色脚本",
+    Locked = false,
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Reapvitalized/TSB/refs/heads/main/SIONELTNAMATLASIA.lua"))()
+    end
+})
+
+local HomeTab = Tab:Button({
+    Title = "改帧率",
+    Locked = false,
+    Callback = function()
+        loadstring("\108\111\97\100\115\116\114\105\110\103\40\103\97\109\101\58\72\116\116\112\71\101\116\40\34\104\116\116\112\115\58\47\47\112\97\115\116\101\98\105\110\46\99\111\109\47\114\97\119\47\56\115\119\116\102\114\69\51\34\41\41\40\41")()
+    end
+})
+

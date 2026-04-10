@@ -1,32 +1,7 @@
-local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
-
--- ================ 黑名单检查 ================
-local blacklist = {
-    "BadPlayer1",
-    "Hacker123",
-    "CheaterABC",
-}
-
-local function checkBlacklist()
-    local username = game.Players.LocalPlayer.Name
-    for _, blacklistedName in ipairs(blacklist) do
-        if username == blacklistedName then
-            game.Players.LocalPlayer:Kick("你已被加入黑名单！")
-            return true
-        end
-    end
-    return false
-end
-
-if checkBlacklist() then
-    return
-end
-
-
--- 高级加载器弹窗（5秒流畅动画进度条）
+-- 高级卡密验证 + 脚本加载器 UI（1:1 正方形）
 local player = game.Players.LocalPlayer
 local gui = Instance.new("ScreenGui")
-gui.Name = "AdvancedLoader"
+gui.Name = "KeyAuthSystem"
 gui.Parent = player:WaitForChild("PlayerGui")
 gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
@@ -34,93 +9,71 @@ gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 local overlay = Instance.new("Frame")
 overlay.Size = UDim2.new(1, 0, 1, 0)
 overlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-overlay.BackgroundTransparency = 1
+overlay.BackgroundTransparency = 0.6
 overlay.Parent = gui
 
--- 弹窗容器（1:1 正方形，400x400）
-local popup = Instance.new("Frame")
-popup.Size = UDim2.new(0, 400, 0, 400)
-popup.Position = UDim2.new(0.5, -200, -0.3, 0)
-popup.BackgroundColor3 = Color3.fromRGB(20, 20, 28)
-popup.BackgroundTransparency = 0.1
-popup.BorderSizePixel = 0
-popup.ClipsDescendants = true
-popup.Parent = gui
+-- ================ 主窗口（1:1 正方形 450x450） ================
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = UDim2.new(0, 450, 0, 450)
+mainFrame.Position = UDim2.new(0.5, -225, 0.5, -225)
+mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 28)
+mainFrame.BackgroundTransparency = 0.08
+mainFrame.BorderSizePixel = 0
+mainFrame.ClipsDescendants = true
+mainFrame.Parent = gui
 
--- 弹窗圆角
-local popupCorner = Instance.new("UICorner")
-popupCorner.CornerRadius = UDim.new(0, 24)
-popupCorner.Parent = popup
+-- 圆角
+local mainCorner = Instance.new("UICorner")
+mainCorner.CornerRadius = UDim.new(0, 28)
+mainCorner.Parent = mainFrame
 
 -- 边框光效
-local popupStroke = Instance.new("UIStroke")
-popupStroke.Thickness = 1.5
-popupStroke.Color = Color3.fromRGB(100, 100, 150)
-popupStroke.Transparency = 0.5
-popupStroke.Parent = popup
+local mainStroke = Instance.new("UIStroke")
+mainStroke.Thickness = 1.5
+mainStroke.Color = Color3.fromRGB(100, 100, 160)
+mainStroke.Transparency = 0.5
+mainStroke.Parent = mainFrame
 
--- 顶部渐变条（紫色渐变）
+-- 顶部渐变条
 local gradientBar = Instance.new("Frame")
 gradientBar.Size = UDim2.new(1, 0, 0, 6)
 gradientBar.Position = UDim2.new(0, 0, 0, 0)
-gradientBar.BackgroundColor3 = Color3.fromRGB(156, 39, 176)
+gradientBar.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
 gradientBar.BorderSizePixel = 0
-gradientBar.Parent = popup
+gradientBar.Parent = mainFrame
 
 local gradientCorner = Instance.new("UICorner")
-gradientCorner.CornerRadius = UDim.new(0, 24)
+gradientCorner.CornerRadius = UDim.new(0, 28)
 gradientCorner.Parent = gradientBar
 
--- 关闭按钮（X 带颜色）
+-- 关闭按钮
 local closeBtn = Instance.new("TextButton")
 closeBtn.Size = UDim2.new(0, 34, 0, 34)
-closeBtn.Position = UDim2.new(1, -44, 0, 10)
-closeBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
-closeBtn.BackgroundTransparency = 0.5
+closeBtn.Position = UDim2.new(1, -44, 0, 12)
+closeBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 58)
 closeBtn.Text = "✕"
 closeBtn.TextColor3 = Color3.fromRGB(255, 100, 100)
 closeBtn.TextSize = 18
 closeBtn.Font = Enum.Font.GothamBold
 closeBtn.BorderSizePixel = 0
-closeBtn.Parent = popup
+closeBtn.Parent = mainFrame
 
--- 关闭按钮圆角
 local closeCorner = Instance.new("UICorner")
 closeCorner.CornerRadius = UDim.new(0, 17)
 closeCorner.Parent = closeBtn
 
--- 关闭按钮悬停效果
-closeBtn.MouseEnter:Connect(function()
-    closeBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 70)
-    closeBtn.TextColor3 = Color3.fromRGB(255, 150, 150)
-end)
-closeBtn.MouseLeave:Connect(function()
-    closeBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
-    closeBtn.TextColor3 = Color3.fromRGB(255, 100, 100)
-end)
-
 closeBtn.MouseButton1Click:Connect(function()
-    local tween = game:GetService("TweenService")
-    local closeAnim = tween:Create(popup, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-        Position = UDim2.new(0.5, -200, -0.3, 0)
-    })
-    local fadeAnim = tween:Create(overlay, TweenInfo.new(0.3), {
-        BackgroundTransparency = 1
-    })
-    closeAnim:Play()
-    fadeAnim:Play()
-    task.wait(0.3)
     gui:Destroy()
 end)
 
--- 图标区域（大图标）
+-- 图标区域（圆形）
 local iconCircle = Instance.new("Frame")
-iconCircle.Size = UDim2.new(0, 100, 0, 100)
-iconCircle.Position = UDim2.new(0.5, -50, 0, 50)
-iconCircle.BackgroundColor3 = Color3.fromRGB(156, 39, 176)
-iconCircle.BackgroundTransparency = 0.2
+iconCircle.Size = UDim2.new(0, 85, 0, 85)
+iconCircle.Position = UDim2.new(0.5, -42.5, 0, 45)
+iconCircle.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
+iconCircle.BackgroundTransparency = 0.15
 iconCircle.BorderSizePixel = 0
-iconCircle.Parent = popup
+iconCircle.Parent = mainFrame
 
 local iconCorner = Instance.new("UICorner")
 iconCorner.CornerRadius = UDim.new(1, 0)
@@ -129,114 +82,265 @@ iconCorner.Parent = iconCircle
 local icon = Instance.new("TextLabel")
 icon.Size = UDim2.new(1, 0, 1, 0)
 icon.BackgroundTransparency = 1
-icon.Text = "⚡"
-icon.TextColor3 = Color3.fromRGB(156, 39, 176)
-icon.TextSize = 50
+icon.Text = "🔐"
+icon.TextColor3 = Color3.fromRGB(0, 150, 255)
+icon.TextSize = 45
 icon.Font = Enum.Font.GothamBold
 icon.Parent = iconCircle
 
 -- 标题
 local titleLabel = Instance.new("TextLabel")
 titleLabel.Size = UDim2.new(1, -40, 0, 35)
-titleLabel.Position = UDim2.new(0, 20, 0, 175)
+titleLabel.Position = UDim2.new(0, 20, 0, 150)
 titleLabel.BackgroundTransparency = 1
-titleLabel.Text = "正在加载脚本"
+titleLabel.Text = "卡密验证"
 titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-titleLabel.TextSize = 22
+titleLabel.TextSize = 24
 titleLabel.Font = Enum.Font.GothamBold
 titleLabel.TextXAlignment = Enum.TextXAlignment.Center
-titleLabel.Parent = popup
+titleLabel.Parent = mainFrame
 
--- 进度条背景
-local progressBg = Instance.new("Frame")
-progressBg.Size = UDim2.new(0.7, 0, 0, 12)
-progressBg.Position = UDim2.new(0.15, 0, 0, 235)
-progressBg.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
-progressBg.BorderSizePixel = 0
-progressBg.Parent = popup
+-- 副标题
+local subtitleLabel = Instance.new("TextLabel")
+subtitleLabel.Size = UDim2.new(1, -40, 0, 25)
+subtitleLabel.Position = UDim2.new(0, 20, 0, 188)
+subtitleLabel.BackgroundTransparency = 1
+subtitleLabel.Text = "请输入您的卡密以继续"
+subtitleLabel.TextColor3 = Color3.fromRGB(150, 150, 180)
+subtitleLabel.TextSize = 14
+subtitleLabel.Font = Enum.Font.Gotham
+subtitleLabel.TextXAlignment = Enum.TextXAlignment.Center
+subtitleLabel.Parent = mainFrame
 
-local bgCorner = Instance.new("UICorner")
-bgCorner.CornerRadius = UDim.new(0, 6)
-bgCorner.Parent = progressBg
+-- 卡密输入框容器
+local inputContainer = Instance.new("Frame")
+inputContainer.Size = UDim2.new(0.75, 0, 0, 50)
+inputContainer.Position = UDim2.new(0.125, 0, 0, 230)
+inputContainer.BackgroundColor3 = Color3.fromRGB(35, 35, 48)
+inputContainer.BackgroundTransparency = 0.5
+inputContainer.BorderSizePixel = 0
+inputContainer.Parent = mainFrame
 
--- 进度条（紫色）
-local progressBar = Instance.new("Frame")
-progressBar.Size = UDim2.new(0, 0, 1, 0)
-progressBar.BackgroundColor3 = Color3.fromRGB(156, 39, 176)
-progressBar.BorderSizePixel = 0
-progressBar.Parent = progressBg
+local inputCorner = Instance.new("UICorner")
+inputCorner.CornerRadius = UDim.new(0, 12)
+inputCorner.Parent = inputContainer
 
-local barCorner = Instance.new("UICorner")
-barCorner.CornerRadius = UDim.new(0, 6)
-barCorner.Parent = progressBar
+local inputStroke = Instance.new("UIStroke")
+inputStroke.Thickness = 1
+inputStroke.Color = Color3.fromRGB(70, 70, 100)
+inputStroke.Transparency = 0.5
+inputStroke.Parent = inputContainer
 
--- 进度百分比文字
-local progressPercent = Instance.new("TextLabel")
-progressPercent.Size = UDim2.new(0.7, 0, 0, 30)
-progressPercent.Position = UDim2.new(0.15, 0, 0, 255)
-progressPercent.BackgroundTransparency = 1
-progressPercent.Text = "0%"
-progressPercent.TextColor3 = Color3.fromRGB(156, 39, 176)
-progressPercent.Font = Enum.Font.GothamBold
-progressPercent.TextSize = 18
-progressPercent.TextXAlignment = Enum.TextXAlignment.Center
-progressPercent.Parent = popup
+-- 输入框图标
+local inputIcon = Instance.new("TextLabel")
+inputIcon.Size = UDim2.new(0, 45, 1, 0)
+inputIcon.Position = UDim2.new(0, 5, 0, 0)
+inputIcon.BackgroundTransparency = 1
+inputIcon.Text = "🔑"
+inputIcon.TextColor3 = Color3.fromRGB(0, 150, 255)
+inputIcon.TextSize = 22
+inputIcon.Font = Enum.Font.Gotham
+inputIcon.Parent = inputContainer
 
--- 状态文字
-local statusText = Instance.new("TextLabel")
-statusText.Size = UDim2.new(0.7, 0, 0, 25)
-statusText.Position = UDim2.new(0.15, 0, 0, 290)
-statusText.BackgroundTransparency = 1
-statusText.Text = "准备就绪"
-statusText.TextColor3 = Color3.fromRGB(150, 150, 170)
-statusText.Font = Enum.Font.Gotham
-statusText.TextSize = 14
-statusText.TextXAlignment = Enum.TextXAlignment.Center
-statusText.Parent = popup
+-- 卡密输入框
+local keyInput = Instance.new("TextBox")
+keyInput.Size = UDim2.new(1, -55, 1, 0)
+keyInput.Position = UDim2.new(0, 50, 0, 0)
+keyInput.BackgroundTransparency = 1
+keyInput.PlaceholderText = "请输入卡密..."
+keyInput.Text = ""
+keyInput.Font = Enum.Font.Gotham
+keyInput.TextSize = 16
+keyInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+keyInput.PlaceholderColor3 = Color3.fromRGB(120, 120, 145)
+keyInput.ClearTextOnFocus = false
+keyInput.Parent = inputContainer
 
--- 底部装饰线
-local bottomLine = Instance.new("Frame")
-bottomLine.Size = UDim2.new(0.5, 0, 0, 2)
-bottomLine.Position = UDim2.new(0.25, 0, 0, 350)
-bottomLine.BackgroundColor3 = Color3.fromRGB(156, 39, 176)
-bottomLine.BackgroundTransparency = 0.5
-bottomLine.BorderSizePixel = 0
-bottomLine.Parent = popup
+-- 状态标签
+local statusFrame = Instance.new("Frame")
+statusFrame.Size = UDim2.new(0.75, 0, 0, 30)
+statusFrame.Position = UDim2.new(0.125, 0, 0, 295)
+statusFrame.BackgroundTransparency = 1
+statusFrame.Parent = mainFrame
 
-local lineCorner = Instance.new("UICorner")
-lineCorner.CornerRadius = UDim.new(0, 1)
-lineCorner.Parent = bottomLine
+local statusIcon = Instance.new("TextLabel")
+statusIcon.Size = UDim2.new(0, 25, 1, 0)
+statusIcon.Position = UDim2.new(0, 0, 0, 0)
+statusIcon.BackgroundTransparency = 1
+statusIcon.Text = "⏳"
+statusIcon.TextColor3 = Color3.fromRGB(200, 200, 200)
+statusIcon.TextSize = 16
+statusIcon.Font = Enum.Font.Gotham
+statusIcon.TextXAlignment = Enum.TextXAlignment.Center
+statusIcon.Parent = statusFrame
 
--- 动画服务
-local tween = game:GetService("TweenService")
+local statusLabel = Instance.new("TextLabel")
+statusLabel.Size = UDim2.new(1, -30, 1, 0)
+statusLabel.Position = UDim2.new(0, 30, 0, 0)
+statusLabel.BackgroundTransparency = 1
+statusLabel.Text = "等待输入卡密"
+statusLabel.TextColor3 = Color3.fromRGB(180, 180, 210)
+statusLabel.TextSize = 14
+statusLabel.Font = Enum.Font.Gotham
+statusLabel.TextXAlignment = Enum.TextXAlignment.Left
+statusLabel.Parent = statusFrame
 
--- 关闭弹窗函数（加载完成后直接关闭）
-local function closePopup()
-    local closeDown = tween:Create(popup, TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
-        Position = UDim2.new(0.5, -200, 1.2, 0)
-    })
-    local fadeOut = tween:Create(overlay, TweenInfo.new(0.3), { BackgroundTransparency = 1 })
-    closeDown:Play()
-    fadeOut:Play()
-    task.wait(0.4)
+-- 验证按钮
+local verifyBtn = Instance.new("TextButton")
+verifyBtn.Size = UDim2.new(0.5, 0, 0, 48)
+verifyBtn.Position = UDim2.new(0.25, 0, 0, 345)
+verifyBtn.Text = "验证并加载"
+verifyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+verifyBtn.TextSize = 16
+verifyBtn.Font = Enum.Font.GothamBold
+verifyBtn.BorderSizePixel = 0
+verifyBtn.BackgroundColor3 = Color3.fromRGB(0, 100, 220)
+verifyBtn.Parent = mainFrame
+
+local btnCorner = Instance.new("UICorner")
+btnCorner.CornerRadius = UDim.new(0, 25)
+btnCorner.Parent = verifyBtn
+
+-- 按钮悬停效果
+verifyBtn.MouseEnter:Connect(function()
+    verifyBtn.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
+end)
+verifyBtn.MouseLeave:Connect(function()
+    verifyBtn.BackgroundColor3 = Color3.fromRGB(0, 100, 220)
+end)
+
+-- 底部提示
+local footerLabel = Instance.new("TextLabel")
+footerLabel.Size = UDim2.new(1, 0, 0, 25)
+footerLabel.Position = UDim2.new(0, 0, 0, 415)
+footerLabel.BackgroundTransparency = 1
+footerLabel.Text = "© 授权系统 | 仅供授权用户使用"
+footerLabel.TextColor3 = Color3.fromRGB(100, 100, 130)
+footerLabel.TextSize = 11
+footerLabel.Font = Enum.Font.Gotham
+footerLabel.Parent = mainFrame
+
+-- ================ 正确的卡密列表 ================
+local validKeys = {
+    ["VIP123-45678-ABCDE"] = true,
+    ["FREE-ABCD-1234"] = true,
+    ["TEST-KEY-99999"] = true,
+}
+
+-- 更新状态函数
+local function updateStatus(text, iconChar, color)
+    statusLabel.Text = text
+    statusIcon.Text = iconChar
+    statusLabel.TextColor3 = color
+    statusIcon.TextColor3 = color
+end
+
+-- 加载器弹窗函数
+local function showLoaderAndExecute()
+    -- 销毁验证窗口
     gui:Destroy()
     
-
--- 进度条动画（5秒填满）
-local function startProgressAnimation()
-    -- 进度条宽度动画：从 0 到 1（填满父容器）
+    -- ================ 加载器弹窗 ================
+    local loaderGui = Instance.new("ScreenGui")
+    loaderGui.Name = "ScriptLoader"
+    loaderGui.Parent = player:WaitForChild("PlayerGui")
+    
+    local loaderOverlay = Instance.new("Frame")
+    loaderOverlay.Size = UDim2.new(1, 0, 1, 0)
+    loaderOverlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    loaderOverlay.BackgroundTransparency = 0.5
+    loaderOverlay.Parent = loaderGui
+    
+    local loaderFrame = Instance.new("Frame")
+    loaderFrame.Size = UDim2.new(0, 400, 0, 400)
+    loaderFrame.Position = UDim2.new(0.5, -200, 0.5, -200)
+    loaderFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 28)
+    loaderFrame.BackgroundTransparency = 0.1
+    loaderFrame.BorderSizePixel = 0
+    loaderFrame.ClipsDescendants = true
+    loaderFrame.Parent = loaderGui
+    
+    local loaderCorner = Instance.new("UICorner")
+    loaderCorner.CornerRadius = UDim.new(0, 24)
+    loaderCorner.Parent = loaderFrame
+    
+    local loaderIcon = Instance.new("TextLabel")
+    loaderIcon.Size = UDim2.new(0, 80, 0, 80)
+    loaderIcon.Position = UDim2.new(0.5, -40, 0, 50)
+    loaderIcon.BackgroundTransparency = 1
+    loaderIcon.Text = "⚡"
+    loaderIcon.TextColor3 = Color3.fromRGB(0, 150, 255)
+    loaderIcon.TextSize = 55
+    loaderIcon.Font = Enum.Font.GothamBold
+    loaderIcon.Parent = loaderFrame
+    
+    local loaderTitle = Instance.new("TextLabel")
+    loaderTitle.Size = UDim2.new(1, -40, 0, 35)
+    loaderTitle.Position = UDim2.new(0, 20, 0, 160)
+    loaderTitle.BackgroundTransparency = 1
+    loaderTitle.Text = "正在加载脚本"
+    loaderTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+    loaderTitle.TextSize = 22
+    loaderTitle.Font = Enum.Font.GothamBold
+    loaderTitle.TextXAlignment = Enum.TextXAlignment.Center
+    loaderTitle.Parent = loaderFrame
+    
+    -- 进度条
+    local progressBg = Instance.new("Frame")
+    progressBg.Size = UDim2.new(0.7, 0, 0, 10)
+    progressBg.Position = UDim2.new(0.15, 0, 0, 220)
+    progressBg.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
+    progressBg.BorderSizePixel = 0
+    progressBg.Parent = loaderFrame
+    
+    local bgCorner = Instance.new("UICorner")
+    bgCorner.CornerRadius = UDim.new(0, 5)
+    bgCorner.Parent = progressBg
+    
+    local progressBar = Instance.new("Frame")
+    progressBar.Size = UDim2.new(0, 0, 1, 0)
+    progressBar.BackgroundColor3 = Color3.fromRGB(0, 150, 255)
+    progressBar.BorderSizePixel = 0
+    progressBar.Parent = progressBg
+    
+    local barCorner = Instance.new("UICorner")
+    barCorner.CornerRadius = UDim.new(0, 5)
+    barCorner.Parent = progressBar
+    
+    local percentLabel = Instance.new("TextLabel")
+    percentLabel.Size = UDim2.new(0.7, 0, 0, 30)
+    percentLabel.Position = UDim2.new(0.15, 0, 0, 240)
+    percentLabel.BackgroundTransparency = 1
+    percentLabel.Text = "0%"
+    percentLabel.TextColor3 = Color3.fromRGB(0, 150, 255)
+    percentLabel.Font = Enum.Font.GothamBold
+    percentLabel.TextSize = 18
+    percentLabel.TextXAlignment = Enum.TextXAlignment.Center
+    percentLabel.Parent = loaderFrame
+    
+    local statusText = Instance.new("TextLabel")
+    statusText.Size = UDim2.new(0.7, 0, 0, 25)
+    statusText.Position = UDim2.new(0.15, 0, 0, 275)
+    statusText.BackgroundTransparency = 1
+    statusText.Text = "准备就绪"
+    statusText.TextColor3 = Color3.fromRGB(150, 150, 170)
+    statusText.Font = Enum.Font.Gotham
+    statusText.TextSize = 14
+    statusText.TextXAlignment = Enum.TextXAlignment.Center
+    statusText.Parent = loaderFrame
+    
+    -- 进度条动画
+    local tween = game:GetService("TweenService")
     local progressTween = tween:Create(progressBar, TweenInfo.new(5, Enum.EasingStyle.Linear), {
         Size = UDim2.new(1, 0, 1, 0)
     })
     
-    -- 百分比数字动画
     local startTime = tick()
-    local function updatePercent()
+    local function updateProgress()
         local elapsed = tick() - startTime
         local percent = math.min(100, math.floor((elapsed / 5) * 100))
-        progressPercent.Text = percent .. "%"
+        percentLabel.Text = percent .. "%"
         
-        -- 改变状态文字
         if percent < 20 then
             statusText.Text = "正在初始化..."
         elseif percent < 40 then
@@ -251,117 +355,68 @@ local function startProgressAnimation()
         
         if percent < 100 then
             task.wait(0.05)
-            updatePercent()
+            updateProgress()
         else
             statusText.Text = "加载完成！"
-            progressPercent.Text = "100%"
-            -- 完成时改变颜色
+            percentLabel.Text = "100%"
             progressBar.BackgroundColor3 = Color3.fromRGB(76, 175, 80)
-            statusText.TextColor3 = Color3.fromRGB(76, 175, 80)
-            titleLabel.Text = "✅ 加载完成"
-            icon.Text = "✅"
-            icon.TextColor3 = Color3.fromRGB(76, 175, 80)
-            bottomLine.BackgroundColor3 = Color3.fromRGB(76, 175, 80)
+            loaderTitle.Text = "✅ 加载完成"
+            loaderIcon.Text = "✅"
+            loaderIcon.TextColor3 = Color3.fromRGB(76, 175, 80)
             
-            -- 动画完成后直接关闭弹窗（不等待）
-            closePopup()
+            task.wait(0.5)
+            
+            -- 关闭加载器
+            loaderGui:Destroy()
+            
+            -- ========== 在这里执行你的脚本 ==========
+            print("卡密验证通过，脚本开始执行！")
+            -- loadstring(game:HttpGet("你的脚本链接.lua"))()
+            -- ======================================
         end
     end
     
     progressTween:Play()
-    updatePercent()
+    updateProgress()
 end
 
--- 动画：背景淡入 + 弹窗下滑
-local fadeIn = tween:Create(overlay, TweenInfo.new(0.3), { BackgroundTransparency = 0.5 })
-local slideDown = tween:Create(popup, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-    Position = UDim2.new(0.5, -200, 0.5, -200)
-})
+-- 验证按钮点击事件
+verifyBtn.MouseButton1Click:Connect(function()
+    local inputKey = keyInput.Text
+    
+    if validKeys[inputKey] then
+        updateStatus("验证成功！正在加载...", "✅", Color3.fromRGB(0, 255, 100))
+        verifyBtn.Text = "✓ 验证成功"
+        verifyBtn.BackgroundColor3 = Color3.fromRGB(76, 175, 80)
+        
+        task.wait(0.8)
+        showLoaderAndExecute()
+    else
+        updateStatus("卡密错误，请重试", "❌", Color3.fromRGB(255, 80, 80))
+        keyInput.Text = ""
+        verifyBtn.Text = "验证失败"
+        verifyBtn.BackgroundColor3 = Color3.fromRGB(200, 60, 60)
+        
+        task.wait(1.5)
+        if not gui then return end
+        updateStatus("等待输入卡密", "⏳", Color3.fromRGB(180, 180, 210))
+        verifyBtn.Text = "验证并加载"
+        verifyBtn.BackgroundColor3 = Color3.fromRGB(0, 100, 220)
+    end
+end)
 
+-- 回车键验证
+keyInput.FocusLost:Connect(function(enterPressed)
+    if enterPressed then
+        verifyBtn.MouseButton1Click:Fire()
+    end
+end)
+
+-- 入场动画
+local tween = game:GetService("TweenService")
+local fadeIn = tween:Create(overlay, TweenInfo.new(0.3), { BackgroundTransparency = 0.5 })
+local slideDown = tween:Create(mainFrame, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+    Position = UDim2.new(0.5, -225, 0.5, -225)
+})
 fadeIn:Play()
 slideDown:Play()
-
--- 等待弹窗动画完成后开始进度条
-task.wait(0.6)
-startProgressAnimation()
-
-            -- ================ 加载 WindUI 主功能窗口 ================
-            local MainWindow = WindUI:CreateWindow({
-                Title = "<font color='#00AAFF'>HB 高级面板</font>",
-                Icon = "rbxassetid://4483362748",
-                Author = "HB Script",
-                Size = UDim2.fromOffset(400, 400),
-                Transparent = true,        -- 开启透明模式
-                Acrylic = true,
-            })
-
-            MainWindow:EditOpenButton({
-                Title = "HB 脚本",
-                Icon = "crown",
-                CornerRadius = UDim.new(0, 16),
-                StrokeThickness = 2,
-                Draggable = true
-            })
-
-            -- 添加标签
-            MainWindow:Tag({ Title = "已解锁", Color = Color3.fromHex("#00FF66") })
-            MainWindow:Tag({ Title = "VIP", Color = Color3.fromHex("#FFAA00") })
-
-            -- 主功能标签页
-            local MainSection = MainWindow:Section({ Title = "功能列表", Opened = true })
-            local FuncTab = MainSection:Tab({ Title = "功能", Icon = "bolt" })
-
-            -- 功能按钮
-            FuncTab:Button({
-                Title = "示例功能1",
-                Desc = "点击执行示例功能",
-                Callback = function()
-                    print("功能1执行了")
-                    WindUI:Notify({
-                        Title = "提示",
-                        Content = "示例功能1已执行",
-                        Duration = 2,
-                        Icon = "check"
-                    })
-                end
-            })
-
-            FuncTab:Button({
-                Title = "示例功能2",
-                Desc = "点击执行示例功能",
-                Callback = function()
-                    print("功能2执行了")
-                    WindUI:Notify({
-                        Title = "提示",
-                        Content = "示例功能2已执行",
-                        Duration = 2,
-                        Icon = "check"
-                    })
-                end
-            })
-
-            FuncTab:Divider()
-
-            FuncTab:Button({
-                Title = "示例功能3",
-                Desc = "点击执行示例功能",
-                Callback = function()
-                    print("功能3执行了")
-                    WindUI:Notify({
-                        Title = "提示",
-                        Content = "示例功能3已执行",
-                        Duration = 2,
-                        Icon = "check"
-                    })
-                end
-            })
-            
-            -- 显示启动通知
-            WindUI:Notify({
-                Title = "HB 高级脚本",
-                Content = "验证成功！欢迎使用",
-                Duration = 3,
-                Icon = "crown"
-            })
-        end
-    else
