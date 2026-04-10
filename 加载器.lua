@@ -371,7 +371,8 @@ local function showLoaderAndExecute()
             
             -- ========== 在这里执行你的脚本 ==========
             print("卡密验证通过，脚本开始执行！")
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/HB-ksdb/CNM-LKJ/main/CNM%E9%80%9A%E7%94%A8%E8%84%9A%E6%9C%AC.lua"))()
+            -- 找到这段代码，取消注释并修改链接
+loadstring(game:HttpGet("https://raw.githubusercontent.com/HB-ksdb/CNM-LKJ/main/CNM%E9%80%9A%E7%94%A8%E8%84%9A%E6%9C%AC.lua"))()
             -- ======================================
         end
     end
