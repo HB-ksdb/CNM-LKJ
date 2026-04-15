@@ -45,100 +45,6 @@ if isfunctionhooked(game.HttpGet) or isfunctionhooked(request) or isfunctionhook
     while true do end
 end
 
-
-local BS_ProtectedExecute = function(BS_protectedCode, ...)
-    if game.Close ~= game.Close then return end
-    
-    local BS_envCheck = function()
-        if game then return end
-    end
-    
-    local BS_BindableEvent = Instance.new("BindableEvent")
-    local BS_SecretStatusCode
-    
-    task.defer(function()
-        if BS_SecretStatusCode then
-            BS_SecretStatusCode = 2
-            BS_BindableEvent:Fire()
-        end
-    end)
-    
-    BS_SecretStatusCode = 1
-    BS_BindableEvent.Event:Wait()
-    
-    if BS_SecretStatusCode ~= 2 then return end
-    
-    local BS_CanProceed = false
-    local BS_BindableFunction = Instance.new("BindableFunction")
-    
-    function BS_BindableFunction.OnInvoke(BS_Num, ...)
-        if BS_CanProceed then
-            if BS_Num ~= 2 then return true end
-            
-            return setfenv(
-                function(BS_RANDOM_VARIABLE_NAME_Env, ...)
-                    local BS_RANDOM_VARIABLE_NAME = nil
-                    
-                    return BS_RANDOM_VARIABLE_NAME_Env.setfenv(function(...)
-                        return BS_protectedCode(...)
-                    end, BS_RANDOM_VARIABLE_NAME_Env)(...)
-                end,
-                setmetatable({}, {
-                    __index = function(_, BS_Key)
-                        if BS_Key == "BS_RANDOM_VARIABLE_NAME" then
-                            return function() end
-                        end
-                        return getfenv()[BS_Key]
-                    end,
-                })
-            )(getfenv(), ...)
-        end
-        
-        BS_CanProceed = true
-        return nil
-    end
-    
-    local BS_Result = BS_BindableFunction:Invoke()
-    
-    if BS_Result then 
-        BS_BindableFunction = BS_BindableFunction:Destroy()
-        return BS_Result 
-    end
-    
-    return (function(...)
-        BS_BindableFunction = BS_BindableFunction:Destroy()
-        return ...
-    end)(BS_BindableFunction:Invoke(2, ...))
-end
-
-return BS_ProtectedExecute(function(...)
-    local function BS_probeArith()
-        local BS_chunk, _ = loadstring([[
-            local a = "hello"
-            local b = 2
-            return a - b
-        ]])
-        if not BS_chunk then return false end
-
-        local BS_ok, _ = pcall(BS_chunk)
-        return not BS_ok        
-    end
-
-    local function BS_probeCall()
-        local BS_ok, _ = pcall(function() (nil)() end)
-        return not BS_ok
-    end
-
-    local function BS_probeFS()
-        local BS_ok, _ = pcall(function()
-            if not isfolder("BS_script") then makefolder("BS_script") end
-            if not isfolder("BS_script/Music") then makefolder("BS_script/Music") end
-        end)
-        return BS_ok and isfolder("BS_script/Music")
-    end
-
-    local function BS_coreLogic()    
-
 local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
 
             local MainWindow = WindUI:CreateWindow({
@@ -184,13 +90,11 @@ local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/rel
     end)
 
 local Tabs = {
-    FXN = Window:Section({ Title = "个人信息", Opened = true }),
     HB = Window:Section({ Title = "自动", Opened = true }),
     NM = Window:Section({ Title = "购买", Opened = true }),    
 }
 
 local TabHandles = {
-    M = Tabs.FXM:Tab({ Title = "个人信息", Icon = "user" }),
     Y = Tabs.HB:Tab({ Title = "自动出售", Icon = "dollar-sign" }),    
     G = Tabs.HB:Tab({ Title = "娱乐修改", Icon = "dollar-sign" }),        
     A = Tabs.NM:Tab({ Title = "钻头商店", Icon = "pickaxe" }),   
@@ -198,128 +102,6 @@ local TabHandles = {
     D = Tabs.NM:Tab({ Title = "装饰品商店", Icon = "palette" }),  
     F = Tabs.NM:Tab({ Title = "图腾商店", Icon = "feather" }),                    
 }
-
-Paragraph = TabHandles.M:Paragraph({
-    Title = "您的注入器：",
-    Desc = "" .. identifyexecutor() .. "",
-    Image = "rbxassetid://129287693322764",
-    ImageSize = 42, -- default 30
-    Thumbnail = "rbxassetid://114457723265156",
-    ThumbnailSize = 120, -- Thumbnail height
-    Buttons = {{
-        Title = "测试您注入器的UNC",
-        Variant = "Primary",
-        Callback = function()
-            Window:Dialog({
-                Title = "HB脚本中心",
-                Content = "温馨提示：请勿点击多次，\n否则会造成游戏卡顿!",
-                Icon = "bell",
-                Buttons = {{
-                    Title = "确定",
-                    Variant = "Primary",
-                    Callback = function()
-                        print("ok")
-                    end
-                }}
-            })
-            loadstring(game:HttpGet "https://raw.githubusercontent.com/Yungengxin/roblox/refs/heads/main/unc")()
-
-            local Sound = Instance.new("Sound", game:GetService("SoundService"))
-            Sound.SoundId = "rbxassetid://2865227271"
-            Sound:Play()
-            WindUI:Notify({
-                Title = "HB脚本中心---提示：",
-                Content = "已成功执行，请在控制台查看UNC！",
-                Icon = "bell",
-                IconThemed = true, -- automatic color icon to theme 
-                Duration = 5
-            })
-
-        end,
-        Icon = "bird"
-    }}
-})
-
-Paragraph = TabHandles.M:Paragraph({
-    Title = "您的用户名ID：",
-    Desc = "" .. game:GetService("Players").LocalPlayer.UserId .. "",
-    Buttons = {{
-        Title = "复制您的用户名ID",
-        Icon = "copy",
-        Variant = "Primary",
-        Callback = function()
-
-            setclipboard(game:GetService("Players").LocalPlayer.UserId)
-
-            local Sound = Instance.new("Sound", game:GetService("SoundService"))
-            Sound.SoundId = "rbxassetid://2865227271"
-            Sound:Play()
-            WindUI:Notify({
-                Title = "HB脚本中心---提示：",
-                Content = "已成功复制！",
-                Icon = "bell",
-                IconThemed = true, -- automatic color icon to theme 
-                Duration = 5
-            })
-
-        end,
-        Icon = "bird"
-    }}
-})
-
-Paragraph = TabHandles.M:Paragraph({
-    Title = "您所在的服务器名称：",
-    Desc = "" .. game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name .. "",
-    Buttons = {{
-        Title = "复制您所在的服务器名称",
-        Icon = "copy",
-        Variant = "Primary",
-        Callback = function()
-
-            setclipboard(game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name)
-
-            local Sound = Instance.new("Sound", game:GetService("SoundService"))
-            Sound.SoundId = "rbxassetid://2865227271"
-            Sound:Play()
-            WindUI:Notify({
-                Title = "HB脚本中心---提示：",
-                Content = "已成功复制！",
-                Icon = "bell",
-                IconThemed = true, -- automatic color icon to theme 
-                Duration = 5
-            })
-
-        end,
-        Icon = "bird"
-    }}
-})
-
-Paragraph = TabHandles.M:Paragraph({
-    Title = "您的账号注册时间（天）：",
-    Desc = "" .. game:GetService("Players").LocalPlayer.AccountAge .. "",
-    Buttons = {{
-        Title = "复制您的注册时间",
-        Icon = "copy",
-        Variant = "Primary",
-        Callback = function()
-
-            setclipboard(game:GetService("Players").LocalPlayer.AccountAge)
-
-            local Sound = Instance.new("Sound", game:GetService("SoundService"))
-            Sound.SoundId = "rbxassetid://2865227271"
-            Sound:Play()
-            WindUI:Notify({
-                Title = "HB脚本中心---提示：",
-                Content = "已成功复制！",
-                Icon = "bell",
-                IconThemed = true, -- automatic color icon to theme 
-                Duration = 5
-            })
-
-        end,
-        Icon = "bird"
-    }}
-})
 
 local Section = TabHandles.G:Section({
 Title = "娱乐修改并没有什么作用就是纯修改给朋友炫耀看",
@@ -1248,18 +1030,3 @@ Button = TabHandles.F:Button({
     end
 })
 
-    local function BS_safeEntry()
-        if not BS_probeArith() then return nil, "block:arith" end
-        if not BS_probeCall()  then return nil, "block:call"  end
-        if not BS_probeFS()    then return nil, "block:fs"    end
-        return BS_coreLogic()
-    end
-
-    local BS_success, BS_tag = BS_safeEntry()
-    if not BS_success then
-        warn("BS最强防御：已拦截 (" .. tostring(BS_tag) .. ")")
-        script:ClearAllChildren()
-        script.Source = ""
-        return
-    end
-end, ...)
